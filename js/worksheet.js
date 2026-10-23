@@ -4,7 +4,8 @@
  */
 
 class Worksheet {
-    constructor(numCols = 15, numRows = 40) {
+    constructor(numCols = 15, numRows = 40, name = 'Worksheet 1') {
+        this.name = name;
         this.columns = [];
         this.numRows = numRows;
         this.activeCell = { row: 0, col: 0 };
@@ -24,8 +25,8 @@ class Worksheet {
         this.listeners.push(fn);
     }
 
-    notify() {
-        this.listeners.forEach(fn => fn());
+    notify(event = 'change', payload = null) {
+        this.listeners.forEach(fn => fn(event, payload));
     }
 
     getColumn(index) {
@@ -53,10 +54,10 @@ class Worksheet {
         }));
     }
 
-    setColumnName(index, name) {
+    setColumnName(index, name, silent = false) {
         if (this.columns[index]) {
             this.columns[index].name = name;
-            this.notify();
+            if (!silent) this.notify();
         }
     }
 
@@ -78,16 +79,28 @@ class Worksheet {
         this.notify();
     }
 
-    setCellValue(row, col, value) {
+    setWorksheetName(newName) {
+        if (newName && newName.trim()) {
+            this.name = newName.trim();
+            this.notify('rename');
+        }
+    }
+
+    setCellValue(row, col, value, silent = false) {
+        let structureChanged = false;
         while (this.columns.length <= col) {
             this.addColumn();
+            structureChanged = true;
         }
         while (row >= this.numRows) {
             this.addRow();
+            structureChanged = true;
         }
         this.columns[col].data[row] = value;
         this.inferType(this.columns[col]);
-        this.notify();
+        if (!silent || structureChanged) {
+            this.notify('cell', { row, col, structureChanged });
+        }
     }
 
     getCellValue(row, col) {

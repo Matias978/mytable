@@ -634,6 +634,35 @@ const Dialogs = (() => {
         createModalSkeleton("Ajuda do Mytable 22", bodyHtml, () => true);
     }
 
+    function showRenameWorksheet(worksheet, onRenamed) {
+        const bodyHtml = `
+            <div style="font-size:12px; line-height:1.5; padding: 4px 0;">
+                <label for="modalWsRenameInput" style="display:block; margin-bottom:8px; font-weight:600; color:#222;">Novo nome da planilha:</label>
+                <input type="text" id="modalWsRenameInput" class="win-input" value="${worksheet.name || 'Worksheet 1'}" style="width:100%; box-sizing:border-box; padding:6px 8px; font-size:13px; border:1px solid #7a7a7a; border-radius:2px;">
+                <div style="margin-top:8px; color:#666; font-size:11px;">O nome identifica a planilha no navegador de projeto e nos relatórios de sessão.</div>
+            </div>
+        `;
+        createModalSkeleton("Renomear Planilha", bodyHtml, (modal) => {
+            const input = modal.querySelector("#modalWsRenameInput");
+            const newName = input ? input.value.trim() : "";
+            if (!newName) {
+                alert("O nome da planilha não pode ser vazio.");
+                return false;
+            }
+            worksheet.setWorksheetName(newName);
+            if (onRenamed) onRenamed(newName);
+            return true;
+        });
+
+        setTimeout(() => {
+            const inp = document.getElementById("modalWsRenameInput");
+            if (inp) {
+                inp.focus();
+                inp.select();
+            }
+        }, 50);
+    }
+
     return {
         showDescriptiveStatistics,
         showOneSampleT,
@@ -644,6 +673,7 @@ const Dialogs = (() => {
         showProcessCapability,
         showParetoChart,
         showRandomData,
+        showRenameWorksheet,
         showHelpDialog,
         closeModal
     };

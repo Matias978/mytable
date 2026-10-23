@@ -19,7 +19,7 @@
                         <rect x="13" y="6" width="3" height="9" fill="#81c784"/>
                     </svg>
                 </span>
-                <span class="mtb-titlebar-text">Mytable - Sem título</span>
+                <span class="mtb-titlebar-text" id="titleBarDocName">Mytable - [Worksheet 1]</span>
             </div>
             <div class="mtb-window-controls">
                 <button class="window-ctrl-btn" title="Minimizar">&#x2014;</button>
@@ -67,6 +67,7 @@
                 <div class="menu-dropdown">
                     <div class="menu-action" id="menuAddCol"><span class="menu-action-icon">➕</span>Inserir Nova Coluna</div>
                     <div class="menu-action" id="menuAddRow"><span class="menu-action-icon">➕</span>Inserir Nova Linha</div>
+                    <div class="menu-action" id="menuRenomearWorksheet"><span class="menu-action-icon">✏️</span>Renomear Planilha Ativa...</div>
                     <div class="menu-separator"></div>
                     <div class="menu-action" id="menuClassificar"><span class="menu-action-icon">↕️</span>Classificar Colunas...</div>
                     <div class="menu-action" id="menuEmpilhar"><span class="menu-action-icon">📚</span>Empilhar / Desempilhar Colunas...</div>
@@ -190,7 +191,7 @@
                 <div class="navigator-tree-body" id="navigatorTree">
                     <div class="nav-tree-item active">
                         <span>📑</span>
-                        <span>Worksheet 1</span>
+                        <span id="navWsLabel">Worksheet 1</span>
                     </div>
                 </div>
             </aside>
@@ -232,8 +233,8 @@
                         <button class="nav-arrow-btn" title="Próximo">&#x3E;</button>
                         <button class="nav-arrow-btn" title="Último">&#x3E;&#x7C;</button>
                         <button class="nav-arrow-btn" id="btnTabAddWs" title="Nova Planilha">&#x2B;</button>
-                        <div class="worksheet-tab-item active">
-                            <span>Worksheet 1</span>
+                        <div class="worksheet-tab-item active" id="worksheetTab" title="Duplo clique para renomear" style="cursor: pointer;">
+                            <span id="worksheetTabLabel">Worksheet 1</span>
                         </div>
                     </div>
                 </div>
@@ -269,9 +270,9 @@
         <!-- 5. Bottom Status Bar -->
         <footer class="mtb-statusbar">
             <div class="statusbar-left">
-                <button class="statusbar-tab-btn">
+                <button class="statusbar-tab-btn" id="statusBarWsBtn" title="Clique para renomear">
                     <span>▦</span>
-                    <span>Worksheet 1</span>
+                    <span id="statusBarWsLabel">Worksheet 1</span>
                 </button>
             </div>
             <div class="statusbar-right">

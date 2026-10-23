@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             navigatorTree.innerHTML = `
                 <div class="nav-tree-item active">
                     <span>📑</span>
-                    <span>Worksheet 1</span>
+                    <span id="navWsLabel">${worksheet.name || 'Worksheet 1'}</span>
                 </div>
             `;
             updateWatermark();
@@ -508,11 +508,67 @@ document.addEventListener("DOMContentLoaded", () => {
             gridColNamesRow.appendChild(th);
         });
 
-        // Attach rename events
+    function focusCell(row, col, selectAll = false) {
+        const cell = gridDataRows.querySelector(`td[data-row="${row}"][data-col="${col}"]`);
+        if (cell) {
+            cell.focus();
+            if (selectAll && window.getSelection && document.createRange) {
+                const range = document.createRange();
+                range.selectNodeContents(cell);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            worksheet.activeCell = { row, col };
+            cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+    }
+
+    function updateWorksheetLabels() {
+        const name = worksheet.name || "Worksheet 1";
+        const titleEl = document.getElementById("titleBarDocName");
+        if (titleEl) titleEl.textContent = `Mytable - [${name}]`;
+        const tabEl = document.getElementById("worksheetTabLabel");
+        if (tabEl) tabEl.textContent = name;
+        const statusEl = document.getElementById("statusBarWsLabel");
+        if (statusEl) statusEl.textContent = name;
+        const navEl = document.getElementById("navWsLabel");
+        if (navEl) navEl.textContent = name;
+    }
+
+        // Attach column name events
         gridColNamesRow.querySelectorAll(".col-name-box").forEach(inp => {
+            const c = parseInt(inp.getAttribute("data-col"), 10);
+            inp.addEventListener("input", (e) => {
+                worksheet.setColumnName(c, e.target.value, true);
+            });
             inp.addEventListener("change", (e) => {
-                const c = parseInt(e.target.getAttribute("data-col"), 10);
-                worksheet.setColumnName(c, e.target.value);
+                worksheet.setColumnName(c, e.target.value, true);
+            });
+            inp.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    worksheet.setColumnName(c, e.target.value, true);
+                    focusCell(0, c, true);
+                } else if (e.key === "Tab") {
+                    if (e.shiftKey) {
+                        if (c > 0) {
+                            e.preventDefault();
+                            worksheet.setColumnName(c, e.target.value, true);
+                            gridColNamesRow.querySelector(`.col-name-box[data-col="${c - 1}"]`)?.focus();
+                        }
+                    } else {
+                        if (c + 1 < worksheet.columns.length) {
+                            e.preventDefault();
+                            worksheet.setColumnName(c, e.target.value, true);
+                            gridColNamesRow.querySelector(`.col-name-box[data-col="${c + 1}"]`)?.focus();
+                        } else {
+                            e.preventDefault();
+                            worksheet.setColumnName(c, e.target.value, true);
+                            focusCell(0, 0, true);
+                        }
+                    }
+                }
             });
         });
 
@@ -535,25 +591,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 td.addEventListener("blur", (e) => {
                     const val = e.target.textContent.trim();
-                    worksheet.setCellValue(r, cIdx, val);
+                    worksheet.setCellValue(r, cIdx, val, true);
                 });
 
                 td.addEventListener("keydown", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
-                        const next = gridDataRows.querySelector(`td[data-row="${r + 1}"][data-col="${cIdx}"]`);
-                        if (next) next.focus();
-                        else {
-                            worksheet.addRow();
-                            setTimeout(() => {
-                                const newCell = gridDataRows.querySelector(`td[data-row="${r + 1}"][data-col="${cIdx}"]`);
-                                if (newCell) newCell.focus();
-                            }, 50);
+                        const val = td.textContent.trim();
+                        worksheet.setCellValue(r, cIdx, val, true);
+
+                        if (e.shiftKey) {
+                            // Shift+Enter: Mover para cima
+                            if (r > 0) {
+                                focusCell(r - 1, cIdx, true);
+                            } else {
+                                const colInp = gridColNamesRow.querySelector(`.col-name-box[data-col="${cIdx}"]`);
+                                if (colInp) colInp.focus();
+                            }
+                        } else {
+                            // Enter: Mover para baixo
+                            if (r + 1 < worksheet.numRows) {
+                                focusCell(r + 1, cIdx, true);
+                            } else {
+                                worksheet.addRow();
+                                setTimeout(() => focusCell(r + 1, cIdx, true), 30);
+                            }
                         }
                     } else if (e.key === "Tab") {
                         e.preventDefault();
-                        const next = gridDataRows.querySelector(`td[data-row="${r}"][data-col="${cIdx + 1}"]`);
-                        if (next) next.focus();
+                        const val = td.textContent.trim();
+                        worksheet.setCellValue(r, cIdx, val, true);
+
+                        if (e.shiftKey) {
+                            // Shift+Tab: Mover para esquerda
+                            if (cIdx > 0) {
+                                focusCell(r, cIdx - 1, true);
+                            } else if (r > 0) {
+                                focusCell(r - 1, worksheet.columns.length - 1, true);
+                            }
+                        } else {
+                            // Tab: Mover para direita
+                            if (cIdx + 1 < worksheet.columns.length) {
+                                focusCell(r, cIdx + 1, true);
+                            } else if (r + 1 < worksheet.numRows) {
+                                focusCell(r + 1, 0, true);
+                            } else {
+                                worksheet.addRow();
+                                setTimeout(() => focusCell(r + 1, 0, true), 30);
+                            }
+                        }
+                    } else if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        const val = td.textContent.trim();
+                        worksheet.setCellValue(r, cIdx, val, true);
+                        if (r + 1 < worksheet.numRows) {
+                            focusCell(r + 1, cIdx, true);
+                        } else {
+                            worksheet.addRow();
+                            setTimeout(() => focusCell(r + 1, cIdx, true), 30);
+                        }
+                    } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        const val = td.textContent.trim();
+                        worksheet.setCellValue(r, cIdx, val, true);
+                        if (r > 0) {
+                            focusCell(r - 1, cIdx, true);
+                        } else {
+                            const colInp = gridColNamesRow.querySelector(`.col-name-box[data-col="${cIdx}"]`);
+                            if (colInp) colInp.focus();
+                        }
                     }
                 });
 
@@ -563,7 +669,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    worksheet.onChange(() => {
+    worksheet.onChange((event, payload) => {
+        if (event === "rename") {
+            updateWorksheetLabels();
+            return;
+        }
+        if (event === "cell") {
+            if (payload && payload.structureChanged) {
+                renderWorksheet();
+            }
+            return;
+        }
         renderWorksheet();
     });
 
@@ -719,6 +835,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("menuAddCol")?.addEventListener("click", () => worksheet.addColumn());
     document.getElementById("menuAddRow")?.addEventListener("click", () => worksheet.addRow());
 
+    // Renomear Planilha
+    const triggerRename = () => {
+        Dialogs.showRenameWorksheet(worksheet, () => {
+            updateWorksheetLabels();
+            SessionOutput.appendMessage(`Planilha renomeada para: <strong>${worksheet.name}</strong>`);
+        });
+    };
+    document.getElementById("menuRenomearWorksheet")?.addEventListener("click", triggerRename);
+    document.getElementById("worksheetTab")?.addEventListener("dblclick", triggerRename);
+    document.getElementById("statusBarWsBtn")?.addEventListener("click", triggerRename);
+    document.getElementById("navWsLabel")?.addEventListener("dblclick", triggerRename);
+
     // Calc
     document.getElementById("menuCalcRandom")?.addEventListener("click", () => {
         Dialogs.showRandomData(worksheet, SessionOutput);
@@ -846,5 +974,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load initial empty grid & watermark as shown in screenshot!
     // Notice in screenshot: Minitab opens with blank columns C1..C15 and watermark!
     renderWorksheet();
+    updateWorksheetLabels();
     updateWatermark();
 });

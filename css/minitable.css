@@ -192,6 +192,52 @@ html, body {
     margin: 4px 0;
 }
 
+/* Submenu Flyout (Windows Desktop Style) */
+.menu-submenu-item {
+    position: relative;
+}
+
+.menu-submenu-item > .menu-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 12px 5px 28px;
+    font-size: 12px;
+    color: #222222;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+}
+
+.menu-submenu-arrow {
+    margin-left: auto;
+    padding-left: 16px;
+    font-size: 9px;
+    color: #444444;
+}
+
+.menu-sub-dropdown {
+    display: none;
+    position: absolute;
+    top: -4px;
+    left: 100%;
+    min-width: 230px;
+    background-color: #ffffff;
+    border: 1px solid #c8c8c8;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    z-index: 1050;
+    padding: 3px 0;
+}
+
+.menu-submenu-item:hover > .menu-sub-dropdown {
+    display: block;
+}
+
+.menu-submenu-item:hover > .menu-action {
+    background-color: #90c8f6;
+    color: #000000;
+}
+
 /* -------------------------------------------------------------------------
    3. Quick Access Toolbar
    ------------------------------------------------------------------------- */

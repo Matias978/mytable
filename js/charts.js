@@ -719,12 +719,402 @@ const Charts = (() => {
         container.appendChild(svg);
     }
 
+    // ------------------------------------------------------------------------
+    // 6. Scatter Plot (Gráfico de Dispersão)
+    // ------------------------------------------------------------------------
+    function renderScatterPlot(container, xRaw, yRaw, title = "Gráfico de Dispersão", xLabel = "Variável X", yLabel = "Variável Y") {
+        container.innerHTML = "";
+        const pairs = [];
+        for (let i = 0; i < Math.min(xRaw.length, yRaw.length); i++) {
+            const x = parseFloat(xRaw[i]), y = parseFloat(yRaw[i]);
+            if (!isNaN(x) && !isNaN(y)) pairs.push({ x, y });
+        }
+        if (pairs.length < 2) {
+            container.innerHTML = "<div class='chart-empty'>Dados insuficientes para Gráfico de Dispersão (mínimo 2 pares).</div>";
+            return;
+        }
+
+        const width = 640, height = 380;
+        const margin = { top: 40, right: 40, bottom: 50, left: 65 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const xMin = Math.min(...pairs.map(p => p.x));
+        const xMax = Math.max(...pairs.map(p => p.x));
+        const yMin = Math.min(...pairs.map(p => p.y));
+        const yMax = Math.max(...pairs.map(p => p.y));
+        const xSpan = xMax - xMin || 1;
+        const ySpan = yMax - yMin || 1;
+
+        const getX = v => margin.left + ((v - xMin) / xSpan) * plotWidth;
+        const getY = v => margin.top + plotHeight - ((v - yMin) / ySpan) * plotHeight;
+
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, class: "minitab-chart-svg" });
+        svg.appendChild(createSvgElement("rect", { width, height, fill: "#ffffff" }));
+
+        // Title
+        const titleEl = createSvgElement("text", { x: margin.left + plotWidth / 2, y: 24, "text-anchor": "middle", class: "chart-title" });
+        titleEl.textContent = title;
+        svg.appendChild(titleEl);
+
+        // Y Grid & Axis
+        const yTicks = 5;
+        for (let i = 0; i <= yTicks; i++) {
+            const val = yMin + (ySpan * i) / yTicks;
+            const y = getY(val);
+            svg.appendChild(createSvgElement("line", { x1: margin.left, y1: y, x2: margin.left + plotWidth, y2: y, stroke: "#e8eaed" }));
+            const lbl = createSvgElement("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "axis-tick-label" });
+            lbl.textContent = val.toFixed(2);
+            svg.appendChild(lbl);
+        }
+
+        // X Grid & Axis
+        const xTicks = 6;
+        for (let i = 0; i <= xTicks; i++) {
+            const val = xMin + (xSpan * i) / xTicks;
+            const x = getX(val);
+            svg.appendChild(createSvgElement("line", { x1: x, y1: margin.top, x2: x, y2: margin.top + plotHeight, stroke: "#e8eaed" }));
+            const lbl = createSvgElement("text", { x: x, y: margin.top + plotHeight + 18, "text-anchor": "middle", class: "axis-tick-label" });
+            lbl.textContent = val.toFixed(2);
+            svg.appendChild(lbl);
+        }
+
+        // Axis Titles
+        const xTitle = createSvgElement("text", { x: margin.left + plotWidth / 2, y: height - 12, "text-anchor": "middle", class: "axis-title" });
+        xTitle.textContent = xLabel;
+        svg.appendChild(xTitle);
+
+        const yTitle = createSvgElement("text", { x: 18, y: margin.top + plotHeight / 2, "text-anchor": "middle", transform: `rotate(-90 18 ${margin.top + plotHeight / 2})`, class: "axis-title" });
+        yTitle.textContent = yLabel;
+        svg.appendChild(yTitle);
+
+        // Plot Points
+        pairs.forEach(p => {
+            svg.appendChild(createSvgElement("circle", {
+                cx: getX(p.x),
+                cy: getY(p.y),
+                r: 4.5,
+                fill: "#0078d4",
+                stroke: "#ffffff",
+                "stroke-width": 1.2
+            }));
+        });
+
+        container.appendChild(svg);
+    }
+
+    // ------------------------------------------------------------------------
+    // 7. Boxplot
+    // ------------------------------------------------------------------------
+    function renderBoxplot(container, dataRaw, title = "Boxplot", colName = "Variável") {
+        container.innerHTML = "";
+        const data = Statistics.filterNumeric(dataRaw);
+        if (data.length < 3) {
+            container.innerHTML = "<div class='chart-empty'>Dados insuficientes para Boxplot (mínimo 3 observações).</div>";
+            return;
+        }
+
+        const stats = Statistics.describe(data);
+        const q1 = stats.q1, q3 = stats.q3, med = stats.median, iqr = stats.iqr, mean = stats.mean;
+        const lowerFence = q1 - 1.5 * iqr;
+        const upperFence = q3 + 1.5 * iqr;
+
+        const normalVals = data.filter(v => v >= lowerFence && v <= upperFence);
+        const outliers = data.filter(v => v < lowerFence || v > upperFence);
+
+        const lowerWhisker = Math.min(...normalVals);
+        const upperWhisker = Math.max(...normalVals);
+
+        const width = 580, height = 380;
+        const margin = { top: 40, right: 60, bottom: 50, left: 70 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const allMin = Math.min(stats.min, lowerWhisker);
+        const allMax = Math.max(stats.max, upperWhisker);
+        const span = allMax - allMin || 1;
+        const getY = v => margin.top + plotHeight - ((v - allMin) / span) * plotHeight;
+
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, class: "minitab-chart-svg" });
+        svg.appendChild(createSvgElement("rect", { width, height, fill: "#ffffff" }));
+
+        // Title
+        const titleEl = createSvgElement("text", { x: margin.left + plotWidth / 2, y: 24, "text-anchor": "middle", class: "chart-title" });
+        titleEl.textContent = `${title}: ${colName}`;
+        svg.appendChild(titleEl);
+
+        // Y Axis & Ticks
+        const yTicks = 6;
+        for (let i = 0; i <= yTicks; i++) {
+            const val = allMin + (span * i) / yTicks;
+            const y = getY(val);
+            svg.appendChild(createSvgElement("line", { x1: margin.left, y1: y, x2: margin.left + plotWidth, y2: y, stroke: "#e8eaed" }));
+            const lbl = createSvgElement("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "axis-tick-label" });
+            lbl.textContent = val.toFixed(2);
+            svg.appendChild(lbl);
+        }
+
+        const boxCenterX = margin.left + plotWidth / 2;
+        const boxWidth = 90;
+        const boxLeft = boxCenterX - boxWidth / 2;
+
+        // Whiskers vertical line
+        svg.appendChild(createSvgElement("line", {
+            x1: boxCenterX, y1: getY(upperWhisker),
+            x2: boxCenterX, y2: getY(q3),
+            stroke: "#222222", "stroke-width": 1.5, "stroke-dasharray": "3,3"
+        }));
+        svg.appendChild(createSvgElement("line", {
+            x1: boxCenterX, y1: getY(lowerWhisker),
+            x2: boxCenterX, y2: getY(q1),
+            stroke: "#222222", "stroke-width": 1.5, "stroke-dasharray": "3,3"
+        }));
+
+        // Whisker Caps
+        const capWidth = 36;
+        svg.appendChild(createSvgElement("line", { x1: boxCenterX - capWidth / 2, y1: getY(upperWhisker), x2: boxCenterX + capWidth / 2, y2: getY(upperWhisker), stroke: "#222222", "stroke-width": 1.5 }));
+        svg.appendChild(createSvgElement("line", { x1: boxCenterX - capWidth / 2, y1: getY(lowerWhisker), x2: boxCenterX + capWidth / 2, y2: getY(lowerWhisker), stroke: "#222222", "stroke-width": 1.5 }));
+
+        // IQR Box
+        const boxY = getY(q3);
+        const boxH = Math.max(2, getY(q1) - boxY);
+        svg.appendChild(createSvgElement("rect", {
+            x: boxLeft, y: boxY, width: boxWidth, height: boxH,
+            fill: "#d4e9fc", stroke: "#0078d4", "stroke-width": 2
+        }));
+
+        // Median Line
+        const medY = getY(med);
+        svg.appendChild(createSvgElement("line", {
+            x1: boxLeft, y1: medY, x2: boxLeft + boxWidth, y2: medY,
+            stroke: "#d9381e", "stroke-width": 2.5
+        }));
+
+        // Outliers
+        outliers.forEach(outVal => {
+            const outY = getY(outVal);
+            svg.appendChild(createSvgElement("circle", {
+                cx: boxCenterX, cy: outY, r: 4.5,
+                fill: "#d9381e", stroke: "#ffffff", "stroke-width": 1
+            }));
+        });
+
+        // X Label
+        const xLbl = createSvgElement("text", { x: boxCenterX, y: height - 15, "text-anchor": "middle", class: "axis-title" });
+        xLbl.textContent = `${colName} (N = ${data.length})`;
+        svg.appendChild(xLbl);
+
+        container.appendChild(svg);
+    }
+
+    // ------------------------------------------------------------------------
+    // 8. Bar Chart (Gráfico de Barras)
+    // ------------------------------------------------------------------------
+    function renderBarChart(container, categories, counts, title = "Gráfico de Barras") {
+        container.innerHTML = "";
+        if (!categories || categories.length === 0) {
+            container.innerHTML = "<div class='chart-empty'>Sem categorias para Gráfico de Barras.</div>";
+            return;
+        }
+
+        const width = 640, height = 380;
+        const margin = { top: 40, right: 40, bottom: 65, left: 60 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const maxCount = Math.max(...counts, 1);
+        const numBars = categories.length;
+        const barWidth = Math.min(65, (plotWidth / numBars) * 0.7);
+        const slotWidth = plotWidth / numBars;
+
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, class: "minitab-chart-svg" });
+        svg.appendChild(createSvgElement("rect", { width, height, fill: "#ffffff" }));
+
+        // Title
+        const titleEl = createSvgElement("text", { x: margin.left + plotWidth / 2, y: 24, "text-anchor": "middle", class: "chart-title" });
+        titleEl.textContent = title;
+        svg.appendChild(titleEl);
+
+        // Y Grid
+        const yTicks = 5;
+        for (let i = 0; i <= yTicks; i++) {
+            const val = (maxCount * i) / yTicks;
+            const y = margin.top + plotHeight - (plotHeight * i) / yTicks;
+            svg.appendChild(createSvgElement("line", { x1: margin.left, y1: y, x2: margin.left + plotWidth, y2: y, stroke: "#e8eaed" }));
+            const lbl = createSvgElement("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "axis-tick-label" });
+            lbl.textContent = Math.round(val);
+            svg.appendChild(lbl);
+        }
+
+        // Draw Bars
+        categories.forEach((cat, idx) => {
+            const count = counts[idx] || 0;
+            const barH = (count / maxCount) * plotHeight;
+            const x = margin.left + idx * slotWidth + (slotWidth - barWidth) / 2;
+            const y = margin.top + plotHeight - barH;
+
+            svg.appendChild(createSvgElement("rect", {
+                x, y, width: barWidth, height: barH,
+                fill: "#0078d4", stroke: "#005a9e", "stroke-width": 1
+            }));
+
+            // Value label above bar
+            const vLbl = createSvgElement("text", { x: x + barWidth / 2, y: y - 5, "text-anchor": "middle", class: "axis-tick-label", "font-weight": "bold" });
+            vLbl.textContent = count;
+            svg.appendChild(vLbl);
+
+            // Category Label below
+            const cLbl = createSvgElement("text", { x: x + barWidth / 2, y: margin.top + plotHeight + 18, "text-anchor": "middle", class: "axis-tick-label" });
+            cLbl.textContent = cat;
+            svg.appendChild(cLbl);
+        });
+
+        container.appendChild(svg);
+    }
+
+    // ------------------------------------------------------------------------
+    // 9. Time Series Plot (Gráfico de Séries Temporais)
+    // ------------------------------------------------------------------------
+    function renderTimeSeries(container, dataRaw, title = "Gráfico de Séries Temporais", label = "Série") {
+        container.innerHTML = "";
+        const data = Statistics.filterNumeric(dataRaw);
+        if (data.length < 2) {
+            container.innerHTML = "<div class='chart-empty'>Dados insuficientes para Séries Temporais.</div>";
+            return;
+        }
+
+        const width = 640, height = 380;
+        const margin = { top: 40, right: 40, bottom: 50, left: 60 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const yMin = Math.min(...data);
+        const yMax = Math.max(...data);
+        const ySpan = yMax - yMin || 1;
+
+        const getX = idx => margin.left + (idx / (data.length - 1)) * plotWidth;
+        const getY = v => margin.top + plotHeight - ((v - yMin) / ySpan) * plotHeight;
+
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, class: "minitab-chart-svg" });
+        svg.appendChild(createSvgElement("rect", { width, height, fill: "#ffffff" }));
+
+        // Title
+        const titleEl = createSvgElement("text", { x: margin.left + plotWidth / 2, y: 24, "text-anchor": "middle", class: "chart-title" });
+        titleEl.textContent = title;
+        svg.appendChild(titleEl);
+
+        // Y Grid
+        const yTicks = 5;
+        for (let i = 0; i <= yTicks; i++) {
+            const val = yMin + (ySpan * i) / yTicks;
+            const y = getY(val);
+            svg.appendChild(createSvgElement("line", { x1: margin.left, y1: y, x2: margin.left + plotWidth, y2: y, stroke: "#e8eaed" }));
+            const lbl = createSvgElement("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "axis-tick-label" });
+            lbl.textContent = val.toFixed(2);
+            svg.appendChild(lbl);
+        }
+
+        // Connecting Line
+        let pathD = `M ${getX(0)} ${getY(data[0])}`;
+        for (let i = 1; i < data.length; i++) {
+            pathD += ` L ${getX(i)} ${getY(data[i])}`;
+        }
+        svg.appendChild(createSvgElement("path", {
+            d: pathD,
+            fill: "none",
+            stroke: "#0078d4",
+            "stroke-width": 2
+        }));
+
+        // Dots
+        data.forEach((val, i) => {
+            svg.appendChild(createSvgElement("circle", {
+                cx: getX(i),
+                cy: getY(val),
+                r: 3.5,
+                fill: "#0078d4",
+                stroke: "#ffffff",
+                "stroke-width": 1
+            }));
+        });
+
+        // X Axis Label
+        const xTitle = createSvgElement("text", { x: margin.left + plotWidth / 2, y: height - 12, "text-anchor": "middle", class: "axis-title" });
+        xTitle.textContent = "Índice / Tempo";
+        svg.appendChild(xTitle);
+
+        container.appendChild(svg);
+    }
+
+    // ------------------------------------------------------------------------
+    // 10. Pie Chart (Gráfico de Setores)
+    // ------------------------------------------------------------------------
+    function renderPieChart(container, categories, counts, title = "Gráfico de Setores") {
+        container.innerHTML = "";
+        const total = counts.reduce((a, b) => a + b, 0);
+        if (total <= 0) {
+            container.innerHTML = "<div class='chart-empty'>Sem dados para Gráfico de Setores.</div>";
+            return;
+        }
+
+        const width = 600, height = 380;
+        const centerX = 210, centerY = 200, radius = 130;
+        const colors = ["#0078d4", "#2b88d8", "#00bcf2", "#004b87", "#002050", "#5c2d91", "#008272", "#107c41"];
+
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, class: "minitab-chart-svg" });
+        svg.appendChild(createSvgElement("rect", { width, height, fill: "#ffffff" }));
+
+        // Title
+        const titleEl = createSvgElement("text", { x: width / 2, y: 28, "text-anchor": "middle", class: "chart-title" });
+        titleEl.textContent = title;
+        svg.appendChild(titleEl);
+
+        let currentAngle = -Math.PI / 2;
+        categories.forEach((cat, idx) => {
+            const count = counts[idx] || 0;
+            const sliceAngle = (count / total) * 2 * Math.PI;
+            const endAngle = currentAngle + sliceAngle;
+
+            const x1 = centerX + radius * Math.cos(currentAngle);
+            const y1 = centerY + radius * Math.sin(currentAngle);
+            const x2 = centerX + radius * Math.cos(endAngle);
+            const y2 = centerY + radius * Math.sin(endAngle);
+
+            const largeArc = sliceAngle > Math.PI ? 1 : 0;
+            const pathData = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+            svg.appendChild(createSvgElement("path", {
+                d: pathData,
+                fill: colors[idx % colors.length],
+                stroke: "#ffffff",
+                "stroke-width": 1.5
+            }));
+
+            // Legend item
+            const legY = 70 + idx * 24;
+            svg.appendChild(createSvgElement("rect", { x: 390, y: legY, width: 14, height: 14, fill: colors[idx % colors.length] }));
+            const legTxt = createSvgElement("text", { x: 412, y: legY + 11, class: "axis-tick-label" });
+            const pct = ((count / total) * 100).toFixed(1);
+            legTxt.textContent = `${cat}: ${count} (${pct}%)`;
+            svg.appendChild(legTxt);
+
+            currentAngle = endAngle;
+        });
+
+        container.appendChild(svg);
+    }
+
     return {
         renderHistogram,
         renderXbarRChart,
         renderProcessCapability,
         renderPareto,
-        renderFittedLinePlot
+        renderFittedLinePlot,
+        renderScatterPlot,
+        renderBoxplot,
+        renderBarChart,
+        renderTimeSeries,
+        renderPieChart
     };
 })();
 

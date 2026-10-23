@@ -663,6 +663,208 @@ const Dialogs = (() => {
         }, 50);
     }
 
+    function showScatterPlotDialog(worksheet, sessionOutput, chartTarget) {
+        const colPicker = renderColumnPicker(worksheet, true);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Variável Y (Vertical):</label>
+                        <input type="text" id="diagScatterY" class="form-control" placeholder="ex: C2">
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Variável X (Horizontal):</label>
+                        <input type="text" id="diagScatterX" class="form-control" placeholder="ex: C1">
+                    </div>
+                    <div style="margin-top:12px; font-size:11px; color:#666;">
+                        Gera gráfico de dispersão com mapeamento bi-variado dos dados.
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton("Gráfico de Dispersão", bodyHtml, (modal) => {
+            const yName = modal.querySelector("#diagScatterY").value.trim();
+            const xName = modal.querySelector("#diagScatterX").value.trim();
+            const colY = worksheet.getColumnByName(yName);
+            const colX = worksheet.getColumnByName(xName);
+            if (!colY || !colX) {
+                alert("Por favor, selecione variáveis X e Y válidas na planilha.");
+                return false;
+            }
+            const yLabel = colY.name ? `C${colY.index + 1}: ${colY.name}` : `C${colY.index + 1}`;
+            const xLabel = colX.name ? `C${colX.index + 1}: ${colX.name}` : `C${colX.index + 1}`;
+            sessionOutput.appendChartCard(`Gráfico de Dispersão: ${yLabel} vs ${xLabel}`, (box) => {
+                Charts.renderScatterPlot(box, colX.data, colY.data, `Dispersão de ${yLabel} vs ${xLabel}`, xLabel, yLabel);
+            });
+            sessionOutput.appendCommandHistory(`PLOT ${yName} * ${xName}`, new Date().toLocaleTimeString());
+            return true;
+        });
+    }
+
+    function showBoxplotDialog(worksheet, sessionOutput, chartTarget) {
+        const colPicker = renderColumnPicker(worksheet, true);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Variável:</label>
+                        <input type="text" id="diagBoxVar" class="form-control" placeholder="ex: C1">
+                        <small style="color:#666; font-size:11px;">Selecione a variável numérica para construir o Boxplot.</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton("Boxplot", bodyHtml, (modal) => {
+            const varName = modal.querySelector("#diagBoxVar").value.trim();
+            const col = worksheet.getColumnByName(varName);
+            if (!col) {
+                alert("Por favor, selecione uma coluna válida.");
+                return false;
+            }
+            const label = col.name ? `C${col.index + 1}: ${col.name}` : `C${col.index + 1}`;
+            sessionOutput.appendChartCard(`Boxplot: ${label}`, (box) => {
+                Charts.renderBoxplot(box, col.data, "Boxplot", label);
+            });
+            sessionOutput.appendCommandHistory(`BOXPLOT ${varName}`, new Date().toLocaleTimeString());
+            return true;
+        });
+    }
+
+    function showBarChartDialog(worksheet, sessionOutput, chartTarget) {
+        const colPicker = renderColumnPicker(worksheet, false);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Coluna Categórica ou Contagens:</label>
+                        <input type="text" id="diagBarVar" class="form-control" placeholder="ex: C1">
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton("Gráfico de Barras", bodyHtml, (modal) => {
+            const varName = modal.querySelector("#diagBarVar").value.trim();
+            const col = worksheet.getColumnByName(varName);
+            if (!col) {
+                alert("Por favor, selecione uma coluna válida.");
+                return false;
+            }
+            const label = col.name ? `C${col.index + 1}: ${col.name}` : `C${col.index + 1}`;
+            const countsMap = {};
+            col.data.filter(v => v !== '' && v !== null && v !== undefined).forEach(v => {
+                countsMap[v] = (countsMap[v] || 0) + 1;
+            });
+            const cats = Object.keys(countsMap);
+            const cnts = Object.values(countsMap);
+            sessionOutput.appendChartCard(`Gráfico de Barras: ${label}`, (box) => {
+                Charts.renderBarChart(box, cats, cnts, `Gráfico de Barras de ${label}`);
+            });
+            sessionOutput.appendCommandHistory(`BARCHART ${varName}`, new Date().toLocaleTimeString());
+            return true;
+        });
+    }
+
+    function showTimeSeriesPlotDialog(worksheet, sessionOutput, chartTarget) {
+        const colPicker = renderColumnPicker(worksheet, true);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Série (Coluna Numérica):</label>
+                        <input type="text" id="diagTsVar" class="form-control" placeholder="ex: C1">
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton("Gráfico de Séries Temporais", bodyHtml, (modal) => {
+            const varName = modal.querySelector("#diagTsVar").value.trim();
+            const col = worksheet.getColumnByName(varName);
+            if (!col) {
+                alert("Por favor, selecione uma coluna válida.");
+                return false;
+            }
+            const label = col.name ? `C${col.index + 1}: ${col.name}` : `C${col.index + 1}`;
+            sessionOutput.appendChartCard(`Séries Temporais: ${label}`, (box) => {
+                Charts.renderTimeSeries(box, col.data, `Série Temporal: ${label}`, label);
+            });
+            sessionOutput.appendCommandHistory(`TSPLOT ${varName}`, new Date().toLocaleTimeString());
+            return true;
+        });
+    }
+
+    function showPieChartDialog(worksheet, sessionOutput, chartTarget) {
+        const colPicker = renderColumnPicker(worksheet, false);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Coluna Categórica:</label>
+                        <input type="text" id="diagPieVar" class="form-control" placeholder="ex: C1">
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton("Gráfico de Setores (Pizza)", bodyHtml, (modal) => {
+            const varName = modal.querySelector("#diagPieVar").value.trim();
+            const col = worksheet.getColumnByName(varName);
+            if (!col) {
+                alert("Por favor, selecione uma coluna válida.");
+                return false;
+            }
+            const label = col.name ? `C${col.index + 1}: ${col.name}` : `C${col.index + 1}`;
+            const countsMap = {};
+            col.data.filter(v => v !== '' && v !== null && v !== undefined).forEach(v => {
+                countsMap[v] = (countsMap[v] || 0) + 1;
+            });
+            const cats = Object.keys(countsMap).slice(0, 8);
+            const cnts = cats.map(c => countsMap[c]);
+            sessionOutput.appendChartCard(`Gráfico de Setores: ${label}`, (box) => {
+                Charts.renderPieChart(box, cats, cnts, `Gráfico de Setores de ${label}`);
+            });
+            sessionOutput.appendCommandHistory(`PIECHART ${varName}`, new Date().toLocaleTimeString());
+            return true;
+        });
+    }
+
+    function showGenericStatsDialog(title, description, worksheet, sessionOutput, onExecute = null) {
+        const colPicker = renderColumnPicker(worksheet, true);
+        const bodyHtml = `
+            <div class="dialog-col-selector">
+                ${colPicker}
+                <div style="flex:1;">
+                    <div style="margin-bottom:10px;">
+                        <label style="display:block; font-weight:600; margin-bottom:4px;">Variáveis Selecionadas:</label>
+                        <input type="text" id="diagGenVar" class="form-control" data-multiple="true" placeholder="ex: C1 C2">
+                        <small style="color:#666; font-size:11px;">Dê duplo clique na coluna à esquerda para selecionar.</small>
+                    </div>
+                    <div style="margin-top:14px; padding:10px; background:#f4f6f8; border:1px solid #e1e3e6; border-radius:3px; font-size:11px; color:#444;">
+                        <strong>Operação Mytable 22:</strong><br>
+                        ${description}
+                    </div>
+                </div>
+            </div>
+        `;
+        createModalSkeleton(title, bodyHtml, (modal) => {
+            const varNames = modal.querySelector("#diagGenVar").value.trim();
+            if (!varNames) {
+                alert("Por favor, selecione ao menos uma variável.");
+                return false;
+            }
+            if (onExecute) {
+                onExecute(varNames, modal);
+            } else {
+                sessionOutput.appendMessage(`<strong>${title}</strong> executado com sucesso para as variáveis: <code>${varNames}</code>.`);
+                sessionOutput.appendCommandHistory(`NOTE Executado ${title} (${varNames})`, new Date().toLocaleTimeString());
+            }
+            return true;
+        });
+    }
+
     return {
         showDescriptiveStatistics,
         showOneSampleT,
@@ -673,6 +875,12 @@ const Dialogs = (() => {
         showProcessCapability,
         showParetoChart,
         showRandomData,
+        showScatterPlotDialog,
+        showBoxplotDialog,
+        showBarChartDialog,
+        showTimeSeriesPlotDialog,
+        showPieChartDialog,
+        showGenericStatsDialog,
         showRenameWorksheet,
         showHelpDialog,
         closeModal

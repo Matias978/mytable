@@ -78,10 +78,75 @@
             <div class="menu-item-root">
                 <button class="menu-btn">Calc</button>
                 <div class="menu-dropdown">
-                    <div class="menu-action" id="menuCalcRandom"><span class="menu-action-icon">🎲</span>Dados Aleatórios...</div>
-                    <div class="menu-action" id="menuCalcFormula"><span class="menu-action-icon">fx</span>Calculadora de Colunas...</div>
+                    <div class="menu-action" id="menuCalcFormula"><span class="menu-action-icon">fx</span>Calculadora...</div>
+                    <div class="menu-action" id="menuEstatColunas"><span class="menu-action-icon">📊</span>Estatísticas de Colunas...</div>
+                    <div class="menu-action" id="menuEstatLinhas"><span class="menu-action-icon">☷</span>Estatísticas de Linhas...</div>
+                    <div class="menu-action" id="menuPadronizar"><span class="menu-action-icon">📏</span>Padronização...</div>
                     <div class="menu-separator"></div>
-                    <div class="menu-action" id="menuPadronizar"><span class="menu-action-icon">📏</span>Padronizar Variáveis (Z-Score)...</div>
+
+                    <!-- Criação de Dados Padronizados ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🔢</span>Criação de Dados Padronizados <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuPadraoNumeros">Padrão Simples de Números...</div>
+                            <div class="menu-action" id="menuPadraoTexto">Padrão de Texto Arbitrário...</div>
+                            <div class="menu-action" id="menuPadraoDataHora">Sequência de Data/Hora...</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-action" id="menuMalhaDados"><span class="menu-action-icon">▦</span>Criação de Malha de Dados...</div>
+                    <div class="menu-action" id="menuVarIndicadoras"><span class="menu-action-icon">🔲</span>Criação de Variáveis Indicadoras...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuConfigBase"><span class="menu-action-icon">⚙️</span>Configurar Base...</div>
+
+                    <!-- Dados Aleatórios ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🎲</span>Dados Aleatórios <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuRandNormal">Normal...</div>
+                            <div class="menu-action" id="menuRandUniform">Uniforme...</div>
+                            <div class="menu-action" id="menuRandBinomial">Binomial...</div>
+                            <div class="menu-action" id="menuRandPoisson">Poisson...</div>
+                            <div class="menu-action" id="menuRandExp">Exponencial...</div>
+                            <div class="menu-action" id="menuRandQuiQuadrado">Qui-Quadrado...</div>
+                            <div class="menu-action" id="menuRandWeibull">Weibull...</div>
+                        </div>
+                    </div>
+
+                    <!-- Reamostragem ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🔄</span>Reamostragem <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuBootstrap">Amostragem das Colunas (Bootstrapping)...</div>
+                        </div>
+                    </div>
+
+                    <!-- Distribuições de Probabilidade ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📈</span>Distribuições de Probabilidade <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuDistNormal">Normal...</div>
+                            <div class="menu-action" id="menuDistStudent">t de Student...</div>
+                            <div class="menu-action" id="menuDistQuiQuad">Qui-Quadrado...</div>
+                            <div class="menu-action" id="menuDistF">F de Snedecor...</div>
+                            <div class="menu-action" id="menuDistBinomial">Binomial...</div>
+                            <div class="menu-action" id="menuDistPoisson">Poisson...</div>
+                        </div>
+                    </div>
+                    <div class="menu-separator"></div>
+
+                    <!-- Matrizes ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📐</span>Matrizes <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuMatrizLer">Ler Matriz...</div>
+                            <div class="menu-action" id="menuMatrizTranspor">Transpor Matriz...</div>
+                            <div class="menu-action" id="menuMatrizInverter">Inverter Matriz...</div>
+                            <div class="menu-action" id="menuMatrizMultiplicar">Multiplicar Matrizes...</div>
+                            <div class="menu-action" id="menuMatrizAutovalores">Autovalores e Autovetores...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -89,17 +154,172 @@
             <div class="menu-item-root">
                 <button class="menu-btn">Estat</button>
                 <div class="menu-dropdown">
-                    <div class="menu-action" id="menuEstatDescritiva"><span class="menu-action-icon">📋</span>Estatísticas Descritivas...</div>
-                    <div class="menu-separator"></div>
-                    <div class="menu-action" id="menuTeste1T"><span class="menu-action-icon">🧪</span>Teste t para 1 Amostra...</div>
-                    <div class="menu-action" id="menuTeste2T"><span class="menu-action-icon">🔬</span>Teste t para 2 Amostras...</div>
-                    <div class="menu-action" id="menuAnova"><span class="menu-action-icon">📊</span>ANOVA Unidirecional (One-Way)...</div>
-                    <div class="menu-separator"></div>
-                    <div class="menu-action" id="menuRegressao"><span class="menu-action-icon">📐</span>Regressão / Linha Ajustada...</div>
-                    <div class="menu-separator"></div>
-                    <div class="menu-action" id="menuCapacidade"><span class="menu-action-icon">🎯</span>Análise de Capacidade (Normal)...</div>
-                    <div class="menu-action" id="menuPareto"><span class="menu-action-icon">📊</span>Diagrama de Pareto...</div>
-                    <div class="menu-action" id="menuXbarR"><span class="menu-action-icon">📉</span>Carta de Controle Xbarra-R...</div>
+                    <!-- Estatísticas Básicas ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📋</span>Estatísticas Básicas <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuEstatDescritiva">Exibir Estatísticas Descritivas...</div>
+                            <div class="menu-action" id="menuArmazenarDescritivas">Armazenar Estatísticas Descritivas...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuTeste1Z">Teste Z para 1 Amostra...</div>
+                            <div class="menu-action" id="menuTeste1T">Teste t para 1 Amostra...</div>
+                            <div class="menu-action" id="menuTeste2T">Teste t para 2 Amostras...</div>
+                            <div class="menu-action" id="menuTesteTPareado">Teste t Pareado...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menu1Proporcao">1 Proporção...</div>
+                            <div class="menu-action" id="menu2Proporcoes">2 Proporções...</div>
+                            <div class="menu-action" id="menu1Variancia">1 Variância...</div>
+                            <div class="menu-action" id="menu2Variancias">2 Variâncias...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuCorrelacao">Correlação...</div>
+                            <div class="menu-action" id="menuCovariancia">Covariância...</div>
+                            <div class="menu-action" id="menuTesteNormalidade">Teste de Normalidade...</div>
+                        </div>
+                    </div>
+
+                    <!-- Regressão ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📐</span>Regressão <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuRegressao">Ajustar Modelo de Regressão...</div>
+                            <div class="menu-action" id="menuGraficoFit">Gráfico de Linha Ajustada...</div>
+                            <div class="menu-action" id="menuRegressaoLogistica">Regressão Logística Binária...</div>
+                            <div class="menu-action" id="menuRegressaoNaoLinear">Regressão Não Linear...</div>
+                        </div>
+                    </div>
+
+                    <!-- ANOVA ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📊</span>ANOVA <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuAnova">ANOVA Unidirecional (One-Way)...</div>
+                            <div class="menu-action" id="menuAnovaGlm">Modelo Linear Geral (GLM)...</div>
+                            <div class="menu-action" id="menuAnovaAnom">Análise de Médias (ANOM)...</div>
+                            <div class="menu-action" id="menuAnovaVarIguais">Teste de Variâncias Iguais...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuAnovaIntervalos">Gráfico de Intervalos...</div>
+                            <div class="menu-action" id="menuAnovaEfeitos">Gráfico de Efeitos Principais...</div>
+                            <div class="menu-action" id="menuAnovaInteracoes">Gráfico de Interações...</div>
+                        </div>
+                    </div>
+
+                    <!-- DOE ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🧪</span>DOE (Planejamento de Experimento) <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuDoeFatorial">Fatorial (Criar/Analisar Projeto)...</div>
+                            <div class="menu-action" id="menuDoeSuperficie">Superfície de Resposta...</div>
+                            <div class="menu-action" id="menuDoeMistura">Mistura...</div>
+                            <div class="menu-action" id="menuDoeTaguchi">Taguchi...</div>
+                        </div>
+                    </div>
+
+                    <!-- Cartas de Controle ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📉</span>Cartas de Controle <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuXbarR">Cartas de Subgrupos: Xbarra-R...</div>
+                            <div class="menu-action" id="menuXbarS">Cartas de Subgrupos: Xbarra-S...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuCartasImr">Cartas Individuais: I-MR...</div>
+                            <div class="menu-action" id="menuCartasZmr">Cartas Individuais: Z-MR...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuCartasP">Cartas de Atributos: P e NP...</div>
+                            <div class="menu-action" id="menuCartasCU">Cartas de Atributos: C e U...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuCartasEwma">Cartas Ponderadas: EWMA / CUSUM...</div>
+                        </div>
+                    </div>
+
+                    <!-- Ferramentas da Qualidade ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🎯</span>Ferramentas da Qualidade <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuIshikawa">Diagrama de Causa e Efeito (Ishikawa)...</div>
+                            <div class="menu-action" id="menuPareto">Diagrama de Pareto...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuCapacidade">Análise de Capacidade (Normal / Sixpack)...</div>
+                            <div class="menu-action" id="menuCapacidadeNaoNormal">Análise de Capacidade (Não-Normal)...</div>
+                            <div class="menu-separator"></div>
+                            <div class="menu-action" id="menuGageRR">Estudo de R&R da Medição (Gage R&R)...</div>
+                        </div>
+                    </div>
+
+                    <!-- Confiabilidade/Sobrevivência ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">⏱️</span>Confiabilidade/Sobrevivência <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuConfDistribuicao">Análise de Distribuição (Censura)...</div>
+                            <div class="menu-action" id="menuConfRegressaoVida">Regressão com Dados de Vida...</div>
+                            <div class="menu-action" id="menuConfAcelerado">Teste Acelerado de Vida...</div>
+                        </div>
+                    </div>
+
+                    <!-- Multivariada ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🌌</span>Multivariada <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuPca">Análise de Componentes Principais (PCA)...</div>
+                            <div class="menu-action" id="menuFatores">Análise de Fatores...</div>
+                            <div class="menu-action" id="menuCluster">Agrupamento de Observações (Cluster)...</div>
+                            <div class="menu-action" id="menuDiscriminante">Análise Discriminante...</div>
+                        </div>
+                    </div>
+
+                    <!-- Séries Temporais ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">📈</span>Séries Temporais <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuTimeSeriesPlot">Gráfico de Séries Temporais...</div>
+                            <div class="menu-action" id="menuTsTendencia">Análise de Tendência...</div>
+                            <div class="menu-action" id="menuTsDecomposicao">Decomposição...</div>
+                            <div class="menu-action" id="menuTsMediaMovel">Média Móvel...</div>
+                            <div class="menu-action" id="menuTsAlisamento">Alisamento Exponencial...</div>
+                            <div class="menu-action" id="menuTsArima">Modelo ARIMA...</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabelas ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">☷</span>Tabelas <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuTabelaContagem">Contagem de Variáveis Individuais...</div>
+                            <div class="menu-action" id="menuTabelaCruzada">Tabulação Cruzada e Qui-Quadrado...</div>
+                            <div class="menu-action" id="menuTabelaAssoc">Teste de Associação Qui-Quadrado...</div>
+                        </div>
+                    </div>
+
+                    <!-- Não-Paramétricos ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">🔢</span>Não-Paramétricos <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuWilcoxon">1-Amostra de Wilcoxon...</div>
+                            <div class="menu-action" id="menuMannWhitney">Mann-Whitney (2 Amostras)...</div>
+                            <div class="menu-action" id="menuKruskalWallis">Kruskal-Wallis...</div>
+                            <div class="menu-action" id="menuFriedman">Teste de Friedman...</div>
+                        </div>
+                    </div>
+
+                    <!-- Testes de Equivalência ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">⚖️</span>Testes de Equivalência <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuEquiv1Amostra">1 Amostra...</div>
+                            <div class="menu-action" id="menuEquiv2Amostras">2 Amostras...</div>
+                            <div class="menu-action" id="menuEquivPareado">Pareado...</div>
+                        </div>
+                    </div>
+
+                    <!-- Poder e Tamanho de Amostra ▶ -->
+                    <div class="menu-submenu-item">
+                        <div class="menu-action"><span class="menu-action-icon">⚡</span>Poder e Tamanho de Amostra <span class="menu-submenu-arrow">▶</span></div>
+                        <div class="menu-sub-dropdown">
+                            <div class="menu-action" id="menuPoder1T">Teste t para 1 Amostra...</div>
+                            <div class="menu-action" id="menuPoder2T">Teste t para 2 Amostras...</div>
+                            <div class="menu-action" id="menuPoderAnova">ANOVA Unidirecional...</div>
+                            <div class="menu-action" id="menuPoderDoe">Projeto Fatorial de 2 Níveis...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -107,11 +327,42 @@
             <div class="menu-item-root">
                 <button class="menu-btn">Gráfico</button>
                 <div class="menu-dropdown">
-                    <div class="menu-action" id="menuGraficoHist"><span class="menu-action-icon">📊</span>Histograma (com Curva Normal)...</div>
-                    <div class="menu-action" id="menuGraficoPareto"><span class="menu-action-icon">📉</span>Diagrama de Pareto...</div>
-                    <div class="menu-action" id="menuGraficoFit"><span class="menu-action-icon">📈</span>Gráfico de Linha Ajustada...</div>
-                    <div class="menu-action" id="menuGraficoXbar"><span class="menu-action-icon">📉</span>Carta de Controle Xbarra-R...</div>
-                    <div class="menu-action" id="menuGraficoCapa"><span class="menu-action-icon">🎯</span>Gráfico de Capacidade Sixpack...</div>
+                    <div class="menu-action" id="menuGraficoBuilder"><span class="menu-action-icon">⚙️</span>Construtor de Gráficos...</div>
+                    <div class="menu-action" id="menuGraficoDispersao"><span class="menu-action-icon">⁘</span>Gráfico de Dispersão...</div>
+                    <div class="menu-action" id="menuGraficoDispersaoCaixas"><span class="menu-action-icon">▦</span>Gráfico de Dispersão em Caixas...</div>
+                    <div class="menu-action" id="menuMatrizDispersao"><span class="menu-action-icon">☷</span>Matriz de Dispersão...</div>
+                    <div class="menu-action" id="menuCorrelograma"><span class="menu-action-icon">🔲</span>Correlograma...</div>
+                    <div class="menu-action" id="menuGraficoBolhas"><span class="menu-action-icon">🫧</span>Gráfico de Bolhas...</div>
+                    <div class="menu-action" id="menuDispersaoMarginal"><span class="menu-action-icon">⚏</span>Gráfico de Dispersão Marginal...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuGraficoHist"><span class="menu-action-icon">📊</span>Histograma...</div>
+                    <div class="menu-action" id="menuDiagramaPontos"><span class="menu-action-icon">⁖</span>Diagrama de Pontos...</div>
+                    <div class="menu-action" id="menuRamoFolhas"><span class="menu-action-icon">⁂</span>Ramo-e-Folhas...</div>
+                    <div class="menu-action" id="menuGraficoProbabilidade"><span class="menu-action-icon">📈</span>Gráfico de Probabilidade...</div>
+                    <div class="menu-action" id="menuFdaEmpirica"><span class="menu-action-icon">📉</span>FDA Empírica...</div>
+                    <div class="menu-action" id="menuDistProbabilidade"><span class="menu-action-icon">🔔</span>Gráfico de Distribuição de Probabilidade...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuGraficoBoxplot"><span class="menu-action-icon">🀫</span>Boxplot...</div>
+                    <div class="menu-action" id="menuGraficoIntervalos"><span class="menu-action-icon">↕️</span>Gráfico de Intervalos...</div>
+                    <div class="menu-action" id="menuValoresIndividuais"><span class="menu-action-icon">⁝</span>Gráfico de Valores Individuais...</div>
+                    <div class="menu-action" id="menuGraficoLinhas"><span class="menu-action-icon">📈</span>Gráfico de Linhas...</div>
+                    <div class="menu-action" id="menuCoordParalelas"><span class="menu-action-icon">╳</span>Gráfico de Coordenadas Paralelas...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuGraficoBarras"><span class="menu-action-icon">📊</span>Gráfico de Barras...</div>
+                    <div class="menu-action" id="menuMapaCalor"><span class="menu-action-icon">🏁</span>Mapa de Calor...</div>
+                    <div class="menu-action" id="menuGraficoSetores"><span class="menu-action-icon">🥧</span>Gráfico de Setores...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuGraficoSeriesTemporais"><span class="menu-action-icon">📈</span>Gráfico de Séries Temporais...</div>
+                    <div class="menu-action" id="menuGraficoArea"><span class="menu-action-icon">⛰️</span>Gráfico de Área...</div>
+                    <div class="menu-separator"></div>
+
+                    <div class="menu-action" id="menuGraficoContorno"><span class="menu-action-icon">🟢</span>Gráfico de Contorno...</div>
+                    <div class="menu-action" id="menuDispersao3D"><span class="menu-action-icon">🎲</span>Gráfico de Dispersão 3D...</div>
+                    <div class="menu-action" id="menuSuperficie3D"><span class="menu-action-icon">🧊</span>Gráfico de Superfície 3D...</div>
                 </div>
             </div>
 

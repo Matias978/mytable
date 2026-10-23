@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mytable - Sem título</title>
+    <link rel="stylesheet" href="css/minitable.css">
+</head>
+<body>
+    <div class="minitab-desktop-window">
+        <!-- 1. Native Windows Title Bar -->
+        <header class="mtb-titlebar">
+            <div class="mtb-titlebar-left">
+                <span class="mtb-app-icon">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                        <rect x="1" y="8" width="3" height="7" fill="#8bc34a"/>
+                        <rect x="5" y="4" width="3" height="11" fill="#4caf50"/>
+                        <rect x="9" y="1" width="3" height="14" fill="#2e7d32"/>
+                        <rect x="13" y="6" width="3" height="9" fill="#81c784"/>
+                    </svg>
+                </span>
+                <span class="mtb-titlebar-text">Mytable - Sem título</span>
+            </div>
+            <div class="mtb-window-controls">
+                <button class="window-ctrl-btn" title="Minimizar">&#x2014;</button>
+                <button class="window-ctrl-btn" title="Maximizar">&#x25A2;</button>
+                <button class="window-ctrl-btn btn-close" title="Fechar">&#x2715;</button>
+            </div>
+        </header>
+
+        <!-- 2. Traditional Menu Bar -->
+        <nav class="mtb-menubar">
+            <!-- Arquivo -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Arquivo</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuNovoProjeto"><span class="menu-action-icon">📄</span>Novo Projeto... <span class="menu-action-shortcut">Ctrl+N</span></div>
+                    <div class="menu-action" id="menuAbrirCsv"><span class="menu-action-icon">📂</span>Abrir Arquivo CSV... <span class="menu-action-shortcut">Ctrl+O</span></div>
+                    <div class="menu-action" id="menuSalvarCsv"><span class="menu-action-icon">💾</span>Salvar Planilha como CSV... <span class="menu-action-shortcut">Ctrl+S</span></div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuExemploQC"><span class="menu-action-icon">⚙️</span>Carregar Exemplo: Controle de Qualidade</div>
+                    <div class="menu-action" id="menuExemploPareto"><span class="menu-action-icon">📊</span>Carregar Exemplo: Defeitos Pareto</div>
+                    <div class="menu-action" id="menuExemploRegressao"><span class="menu-action-icon">📈</span>Carregar Exemplo: Vendas e Publicidade</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" onclick="window.print();"><span class="menu-action-icon">🖨️</span>Imprimir... <span class="menu-action-shortcut">Ctrl+P</span></div>
+                </div>
+            </div>
+
+            <!-- Editar -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Editar</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action"><span class="menu-action-icon">↶</span>Desfazer <span class="menu-action-shortcut">Ctrl+Z</span></div>
+                    <div class="menu-action"><span class="menu-action-icon">↷</span>Refazer <span class="menu-action-shortcut">Ctrl+Y</span></div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action"><span class="menu-action-icon">✂️</span>Recortar <span class="menu-action-shortcut">Ctrl+X</span></div>
+                    <div class="menu-action"><span class="menu-action-icon">📑</span>Copiar <span class="menu-action-shortcut">Ctrl+C</span></div>
+                    <div class="menu-action"><span class="menu-action-icon">📋</span>Colar <span class="menu-action-shortcut">Ctrl+V</span></div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuLimparWorksheet"><span class="menu-action-icon">🗑️</span>Limpar Células</div>
+                </div>
+            </div>
+
+            <!-- Dados -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Dados</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuAddCol"><span class="menu-action-icon">➕</span>Inserir Nova Coluna</div>
+                    <div class="menu-action" id="menuAddRow"><span class="menu-action-icon">➕</span>Inserir Nova Linha</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuClassificar"><span class="menu-action-icon">↕️</span>Classificar Colunas...</div>
+                    <div class="menu-action" id="menuEmpilhar"><span class="menu-action-icon">📚</span>Empilhar / Desempilhar Colunas...</div>
+                </div>
+            </div>
+
+            <!-- Calc -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Calc</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuCalcRandom"><span class="menu-action-icon">🎲</span>Dados Aleatórios...</div>
+                    <div class="menu-action" id="menuCalcFormula"><span class="menu-action-icon">fx</span>Calculadora de Colunas...</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuPadronizar"><span class="menu-action-icon">📏</span>Padronizar Variáveis (Z-Score)...</div>
+                </div>
+            </div>
+
+            <!-- Estat -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Estat</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuEstatDescritiva"><span class="menu-action-icon">📋</span>Estatísticas Descritivas...</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuTeste1T"><span class="menu-action-icon">🧪</span>Teste t para 1 Amostra...</div>
+                    <div class="menu-action" id="menuTeste2T"><span class="menu-action-icon">🔬</span>Teste t para 2 Amostras...</div>
+                    <div class="menu-action" id="menuAnova"><span class="menu-action-icon">📊</span>ANOVA Unidirecional (One-Way)...</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuRegressao"><span class="menu-action-icon">📐</span>Regressão / Linha Ajustada...</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuCapacidade"><span class="menu-action-icon">🎯</span>Análise de Capacidade (Normal)...</div>
+                    <div class="menu-action" id="menuPareto"><span class="menu-action-icon">📊</span>Diagrama de Pareto...</div>
+                    <div class="menu-action" id="menuXbarR"><span class="menu-action-icon">📉</span>Carta de Controle Xbarra-R...</div>
+                </div>
+            </div>
+
+            <!-- Gráfico -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Gráfico</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuGraficoHist"><span class="menu-action-icon">📊</span>Histograma (com Curva Normal)...</div>
+                    <div class="menu-action" id="menuGraficoPareto"><span class="menu-action-icon">📉</span>Diagrama de Pareto...</div>
+                    <div class="menu-action" id="menuGraficoFit"><span class="menu-action-icon">📈</span>Gráfico de Linha Ajustada...</div>
+                    <div class="menu-action" id="menuGraficoXbar"><span class="menu-action-icon">📉</span>Carta de Controle Xbarra-R...</div>
+                    <div class="menu-action" id="menuGraficoCapa"><span class="menu-action-icon">🎯</span>Gráfico de Capacidade Sixpack...</div>
+                </div>
+            </div>
+
+            <!-- Visualizar -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Visualizar</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuToggleNav"><span class="menu-action-icon">📁</span>Exibir/Ocultar Navegador</div>
+                    <div class="menu-action" id="menuToggleCli"><span class="menu-action-icon">⌨️</span>Exibir/Ocultar Linha de Comando</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuLimparSessao"><span class="menu-action-icon">🧹</span>Limpar Saída da Sessão</div>
+                </div>
+            </div>
+
+            <!-- Ajuda -->
+            <div class="menu-item-root">
+                <button class="menu-btn">Ajuda</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuAjuda"><span class="menu-action-icon">❓</span>Ajuda do Mytable...</div>
+                    <div class="menu-action" id="menuAjudaCli"><span class="menu-action-icon">📖</span>Guia de Comandos de Sessão (MTB >)</div>
+                    <div class="menu-separator"></div>
+                    <div class="menu-action" id="menuSobre"><span class="menu-action-icon">ℹ️</span>Sobre o Mytable 22...</div>
+                </div>
+            </div>
+
+            <div class="menu-item-root">
+                <button class="menu-btn">Assistente</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuAssisHipo"><span class="menu-action-icon">🧪</span>Testes de Hipótese...</div>
+                    <div class="menu-action" id="menuAssisCapa"><span class="menu-action-icon">🎯</span>Análise de Capacidade...</div>
+                    <div class="menu-action" id="menuAssisSpc"><span class="menu-action-icon">📉</span>Cartas de Controle...</div>
+                </div>
+            </div>
+
+            <div class="menu-item-root">
+                <button class="menu-btn">Módulo de análise preditiva</button>
+                <div class="menu-dropdown">
+                    <div class="menu-action" id="menuTreeNet"><span class="menu-action-icon">🌲</span>Árvores de Decisão CART...</div>
+                    <div class="menu-action" id="menuRandomForest"><span class="menu-action-icon">🌳</span>Random Forests...</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 3. Quick Access Toolbar -->
+        <div class="mtb-toolbar">
+            <button class="tool-btn" id="toolNew" title="Novo Projeto">📄</button>
+            <button class="tool-btn" id="toolOpen" title="Abrir Planilha CSV">📂</button>
+            <button class="tool-btn" id="toolSave" title="Salvar Planilha">💾</button>
+            <button class="tool-btn" id="toolPrint" title="Imprimir" onclick="window.print();">🖨️</button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" title="Recortar">✂️</button>
+            <button class="tool-btn" title="Copiar">📑</button>
+            <button class="tool-btn" title="Colar">📋</button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" title="Desfazer">↶</button>
+            <button class="tool-btn" title="Refazer">↷</button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" title="Procurar">🔍</button>
+            <button class="tool-btn" title="Cancelar Comando">🚫</button>
+            <button class="tool-btn" id="toolHelp" title="Ajuda">❓</button>
+            <button class="tool-btn" id="toolFx" title="Fórmula fx" style="font-weight:bold; font-style:italic;">fx</button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" id="toolQuickDesc" title="Estatísticas Descritivas">📋</button>
+            <button class="tool-btn" id="toolQuickCapa" title="Capacidade de Processo">🎯</button>
+            <button class="tool-btn" id="toolQuickXbar" title="Carta Xbarra-R">📉</button>
+            <button class="tool-btn" id="toolQuickPareto" title="Diagrama de Pareto">📊</button>
+        </div>
+
+        <!-- 4. Main 3-Column Workspace -->
+        <main class="mtb-workspace">
+            <!-- 4A. Left: Navegador -->
+            <aside class="mtb-pane-navigator" id="paneNavigator">
+                <div class="pane-header-title">
+                    <span>Navegador</span>
+                    <button class="pane-collapse-btn" id="btnCollapseNav" title="Recolher Navegador">&#x25C4;</button>
+                </div>
+                <div class="navigator-tree-body" id="navigatorTree">
+                    <div class="nav-tree-item active">
+                        <span>📑</span>
+                        <span>Worksheet 1</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 4B. Center Area: Canvas & Worksheet Grid Split -->
+            <section class="mtb-pane-center">
+                <!-- Center Top: Output / Graph Canvas Area -->
+                <div class="mtb-canvas-area" id="canvasArea">
+                    <!-- Watermark Logo (visible when clean/empty) -->
+                    <div class="mtb-watermark-overlay" id="watermarkOverlay">
+                        <span class="watermark-logo-text">Mytable</span>
+                        <svg class="watermark-arrow" viewBox="0 0 24 24">
+                            <polygon points="5,3 19,12 5,21"/>
+                        </svg>
+                    </div>
+
+                    <!-- Output & Charts Injection Container -->
+                    <div class="canvas-content-box" id="canvasContent"></div>
+                </div>
+
+                <!-- Center Bottom: Objective Grid Worksheet -->
+                <div class="mtb-worksheet-pane">
+                    <div class="worksheet-grid-viewport" id="worksheetViewport">
+                        <table class="minitab-table">
+                            <thead>
+                                <!-- Row 1: C1, C2, C3... -->
+                                <tr id="gridColNumsRow"></tr>
+                                <!-- Row 2: Column Names Input -->
+                                <tr id="gridColNamesRow"></tr>
+                            </thead>
+                            <tbody id="gridDataRows"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bottom Worksheet Tab Strip -->
+                    <div class="worksheet-tab-strip">
+                        <button class="nav-arrow-btn" title="Primeiro">&#x7C;&#x3C;</button>
+                        <button class="nav-arrow-btn" title="Anterior">&#x3C;</button>
+                        <button class="nav-arrow-btn" title="Próximo">&#x3E;</button>
+                        <button class="nav-arrow-btn" title="Último">&#x3E;&#x7C;</button>
+                        <button class="nav-arrow-btn" id="btnTabAddWs" title="Nova Planilha">&#x2B;</button>
+                        <div class="worksheet-tab-item active">
+                            <span>Worksheet 1</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4C. Right: Linha de comando & Histórico -->
+            <aside class="mtb-pane-right" id="paneRight">
+                <!-- Top Box: Linha de comando -->
+                <div class="right-box-command">
+                    <div class="right-box-header">
+                        <span>Linha de comando</span>
+                        <a class="link-action" id="btnLimparComando">Limpar Tudo</a>
+                    </div>
+                    <textarea class="command-textarea" id="cmdInputArea" placeholder="Digite comandos da sessão (ex: DESCRIBE C1 C2; MEAN; STDEV.)"></textarea>
+                    <div class="right-box-footer">
+                        <button class="btn-mtb-action" id="btnExecutarComando">Executar</button>
+                    </div>
+                </div>
+
+                <!-- Bottom Box: Histórico -->
+                <div class="right-box-history">
+                    <div class="right-box-header">
+                        <span>Histórico</span>
+                    </div>
+                    <div class="history-content-box" id="historyContentBox"></div>
+                    <div class="right-box-footer">
+                        <button class="btn-mtb-action" id="btnCopiarLinha">Copiar para Linha de Comando</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- 5. Bottom Status Bar -->
+        <footer class="mtb-statusbar">
+            <div class="statusbar-left">
+                <button class="statusbar-tab-btn">
+                    <span>▦</span>
+                    <span>Worksheet 1</span>
+                </button>
+            </div>
+            <div class="statusbar-right">
+                <div class="view-mode-icons">
+                    <button class="status-icon-btn" title="Planilha Somente">▦</button>
+                    <button class="status-icon-btn" title="Divisão Planilha e Saída">◫</button>
+                    <button class="status-icon-btn" title="Saída Somente">⬚</button>
+                </div>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="btnZoomOut">&#x2212;</button>
+                    <input type="range" class="zoom-slider" id="zoomSlider" min="50" max="150" value="100">
+                    <button class="zoom-btn" id="btnZoomIn">&#x2B;</button>
+                    <span class="zoom-pct" id="zoomPctLabel">100%</span>
+                    <button class="status-icon-btn" id="btnZoomReset" title="Redefinir Zoom">&#x3E;</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/statistics.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/command_parser.js"></script>
+    <script src="js/worksheet.js"></script>
+    <script src="js/dialogs.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

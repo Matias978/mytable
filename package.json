@@ -1,0 +1,22 @@
+{
+  "name": "mytable",
+  "version": "22.0.0",
+  "description": "Mytable 22 - Advanced Native Statistical Engineering & Analytics Suite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "mytable",
+    "statistics",
+    "spc",
+    "quality-control",
+    "capability-analysis",
+    "control-charts",
+    "anova",
+    "regression",
+    "pareto"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "MIT"
+}

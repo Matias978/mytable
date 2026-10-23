@@ -1114,7 +1114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ========================================================================
     // GRÁFICO MENU HANDLERS
     // ========================================================================
-    document.getElementById("menuGraficoBuilder")?.addEventListener("click", () => Dialogs.showScatterPlotDialog(worksheet, SessionOutput, createChartTarget("Construtor de Gráficos")));
+    document.getElementById("menuGraficoBuilder")?.addEventListener("click", () => Dialogs.showGraphBuilderDialog(worksheet, SessionOutput));
     document.getElementById("menuGraficoDispersao")?.addEventListener("click", () => Dialogs.showScatterPlotDialog(worksheet, SessionOutput, createChartTarget("Gráfico de Dispersão")));
     document.getElementById("menuGraficoDispersaoCaixas")?.addEventListener("click", () => Dialogs.showScatterPlotDialog(worksheet, SessionOutput, createChartTarget("Dispersão em Caixas")));
     document.getElementById("menuMatrizDispersao")?.addEventListener("click", () => Dialogs.showGenericStatsDialog("Matriz de Dispersão (Draftsman Plot)", "Gera matriz com todos os pares de diagramas de dispersão entre variáveis.", worksheet, SessionOutput));

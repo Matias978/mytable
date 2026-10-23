@@ -865,6 +865,152 @@ const Dialogs = (() => {
         });
     }
 
+    function showGraphBuilderDialog(worksheet, sessionOutput) {
+        const colPicker = renderColumnPicker(worksheet, true);
+        const graphTypes = [
+            { id: "scatter", label: "Gráfico de Dispersão", icon: "⁘", desc: "Mapeamento bidimensional X vs Y" },
+            { id: "hist", label: "Histograma com Curva Normal", icon: "📊", desc: "Distribuição e frequências com curva gaussiana" },
+            { id: "boxplot", label: "Boxplot (Diagrama de Caixas)", icon: "🀫", desc: "Quartis Q1, Q3, mediana e detecção de outliers" },
+            { id: "bar", label: "Gráfico de Barras", icon: "📊", desc: "Contagens e frequências por categorias" },
+            { id: "timeseries", label: "Série Temporal (TSPlot)", icon: "📈", desc: "Tendência sequencial ao longo do tempo" },
+            { id: "pie", label: "Gráfico de Setores (Pizza)", icon: "🥧", desc: "Proporções percentuais de categorias" },
+            { id: "pareto", label: "Diagrama de Pareto", icon: "📉", desc: "Defeitos ordenados com curva de 80-20 acumulada" },
+            { id: "xbar", label: "Carta de Controle Xbarra-R", icon: "📉", desc: "Limites de controle estatístico de processo (SPC)" },
+            { id: "capa", label: "Capacidade do Processo Sixpack", icon: "🎯", desc: "Índices Cp, Cpk, Pp, Ppk e PPM esperado" },
+            { id: "interval", label: "Gráfico de Intervalos", icon: "↕️", desc: "Médias e intervalos de confiança de 95%" },
+            { id: "area", label: "Gráfico de Área", icon: "⛰️", desc: "Evolução acumulada de valores" },
+            { id: "dotplot", label: "Diagrama de Pontos", icon: "⁖", desc: "Pontos agrupados por valor individual" }
+        ];
+
+        let graphItemsHtml = graphTypes.map((g, idx) => `
+            <div class="graph-builder-type-item ${idx === 0 ? 'selected' : ''}" data-type="${g.id}" style="padding:6px 10px; border-radius:3px; margin-bottom:4px; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:8px; ${idx === 0 ? 'background-color:#e5f1fb;' : ''}">
+                <span style="font-size:15px;">${g.icon}</span>
+                <div>
+                    <div style="font-weight:600; color:#222;">${g.label}</div>
+                    <div style="font-size:10px; color:#666;">${g.desc}</div>
+                </div>
+            </div>
+        `).join("");
+
+        const bodyHtml = `
+            <div style="display:flex; gap:16px; width:680px; max-width:90vw;">
+                <!-- Left: Scrollable Graph Gallery Column -->
+                <div style="width:230px; display:flex; flex-direction:column;">
+                    <label style="font-weight:600; font-size:12px; margin-bottom:6px; color:#333;">Tipos de Gráficos:</label>
+                    <div id="builderGraphList" style="flex:1; height:260px; max-height:260px; overflow-y:auto; overflow-x:hidden; border:1px solid #d1d5db; border-radius:3px; padding:4px; background:#fafafa;">
+                        ${graphItemsHtml}
+                    </div>
+                </div>
+
+                <!-- Center: Column Selection -->
+                <div style="width:140px; display:flex; flex-direction:column;">
+                    <label style="font-weight:600; font-size:12px; margin-bottom:6px; color:#333;">Colunas:</label>
+                    ${colPicker}
+                </div>
+
+                <!-- Right: Variable Inputs -->
+                <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;" id="builderLblVar1">Variável Y / Primária:</label>
+                        <input type="text" id="builderVar1" class="form-control" placeholder="ex: C1">
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;" id="builderLblVar2">Variável X (Opcional):</label>
+                        <input type="text" id="builderVar2" class="form-control" placeholder="ex: C2">
+                    </div>
+                    <div id="builderInfoBox" style="margin-top:auto; padding:8px 10px; background:#f0f7fd; border:1px solid #c7e0f4; border-radius:3px; font-size:11px; color:#004e8c;">
+                        Selecione o tipo de gráfico à esquerda e indique as colunas para plotagem imediata.
+                    </div>
+                </div>
+            </div>
+        `;
+
+        createModalSkeleton("Construtor de Gráficos", bodyHtml, (modal) => {
+            const selectedItem = modal.querySelector(".graph-builder-type-item.selected");
+            const type = selectedItem ? selectedItem.getAttribute("data-type") : "scatter";
+            const v1 = modal.querySelector("#builderVar1").value.trim();
+            const v2 = modal.querySelector("#builderVar2").value.trim();
+
+            const col1 = worksheet.getColumnByName(v1);
+            const col2 = worksheet.getColumnByName(v2);
+
+            if (!col1 && type !== "dist") {
+                alert("Por favor, selecione ao menos uma coluna válida.");
+                return false;
+            }
+
+            const label1 = col1 ? (col1.name ? `C${col1.index + 1}: ${col1.name}` : `C${col1.index + 1}`) : "";
+            const label2 = col2 ? (col2.name ? `C${col2.index + 1}: ${col2.name}` : `C${col2.index + 1}`) : "";
+
+            if (type === "scatter" && col1 && col2) {
+                sessionOutput.appendChartCard(`Dispersão: ${label1} vs ${label2}`, (box) => {
+                    Charts.renderScatterPlot(box, col2.data, col1.data, `Dispersão de ${label1} vs ${label2}`, label2, label1);
+                });
+            } else if (type === "boxplot" && col1) {
+                sessionOutput.appendChartCard(`Boxplot: ${label1}`, (box) => {
+                    Charts.renderBoxplot(box, col1.data, "Boxplot", label1);
+                });
+            } else if (type === "bar" && col1) {
+                const map = {};
+                col1.data.filter(v => v !== '').forEach(v => map[v] = (map[v] || 0) + 1);
+                sessionOutput.appendChartCard(`Gráfico de Barras: ${label1}`, (box) => {
+                    Charts.renderBarChart(box, Object.keys(map), Object.values(map), `Barras de ${label1}`);
+                });
+            } else if (type === "timeseries" && col1) {
+                sessionOutput.appendChartCard(`Séries Temporais: ${label1}`, (box) => {
+                    Charts.renderTimeSeries(box, col1.data, `Série Temporal: ${label1}`, label1);
+                });
+            } else if (type === "pie" && col1) {
+                const map = {};
+                col1.data.filter(v => v !== '').forEach(v => map[v] = (map[v] || 0) + 1);
+                const keys = Object.keys(map).slice(0, 8);
+                sessionOutput.appendChartCard(`Gráfico de Setores: ${label1}`, (box) => {
+                    Charts.renderPieChart(box, keys, keys.map(k => map[k]), `Setores de ${label1}`);
+                });
+            } else if (type === "pareto" && col1) {
+                const pareto = Statistics.pareto(col1.data);
+                sessionOutput.appendChartCard(`Diagrama de Pareto: ${label1}`, (box) => {
+                    Charts.renderPareto(box, pareto, `Diagrama de Pareto de ${label1}`);
+                });
+            } else if (type === "xbar" && col1) {
+                const spc = Statistics.xbarR(col1.data, 5);
+                sessionOutput.appendChartCard(`Carta Xbarra-R: ${label1}`, (box) => {
+                    Charts.renderXbarRChart(box, spc, `Carta Xbarra-R: ${label1}`);
+                });
+            } else if (type === "capa" && col1) {
+                const capa = Statistics.processCapability(col1.data, 5, 20.2, 19.8);
+                sessionOutput.appendChartCard(`Capacidade do Processo: ${label1}`, (box) => {
+                    Charts.renderProcessCapability(box, capa, `Relatório de Capacidade: ${label1}`);
+                });
+            } else {
+                // Default Histogram
+                sessionOutput.appendChartCard(`Histograma: ${label1}`, (box) => {
+                    Charts.renderHistogram(box, col1.data, `Histograma de ${label1}`);
+                });
+            }
+
+            sessionOutput.appendCommandHistory(`NOTE Construtor de Gráficos: ${type} (${v1})`, new Date().toLocaleTimeString());
+            return true;
+        });
+
+        // Add selection interaction in the modal
+        setTimeout(() => {
+            const list = document.getElementById("builderGraphList");
+            if (list) {
+                list.querySelectorAll(".graph-builder-type-item").forEach(item => {
+                    item.addEventListener("click", () => {
+                        list.querySelectorAll(".graph-builder-type-item").forEach(i => {
+                            i.classList.remove("selected");
+                            i.style.backgroundColor = "";
+                        });
+                        item.classList.add("selected");
+                        item.style.backgroundColor = "#e5f1fb";
+                    });
+                });
+            }
+        }, 30);
+    }
+
     return {
         showDescriptiveStatistics,
         showOneSampleT,
@@ -881,6 +1027,7 @@ const Dialogs = (() => {
         showTimeSeriesPlotDialog,
         showPieChartDialog,
         showGenericStatsDialog,
+        showGraphBuilderDialog,
         showRenameWorksheet,
         showHelpDialog,
         closeModal

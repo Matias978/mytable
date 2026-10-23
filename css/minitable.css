@@ -216,17 +216,49 @@ html, body {
     color: #444444;
 }
 
+.menu-dropdown.menu-scrollable,
+.menu-dropdown:not(:has(.menu-submenu-item)) {
+    max-height: calc(100vh - 45px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .menu-sub-dropdown {
     display: none;
     position: absolute;
     top: -4px;
     left: 100%;
     min-width: 230px;
+    max-height: calc(100vh - 45px);
+    overflow-y: auto;
+    overflow-x: hidden;
     background-color: #ffffff;
     border: 1px solid #c8c8c8;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
     z-index: 1050;
     padding: 3px 0;
+}
+
+/* Elegant Native Windows Scrollbar for Menu Lists */
+.menu-dropdown::-webkit-scrollbar,
+.menu-sub-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu-dropdown::-webkit-scrollbar-track,
+.menu-sub-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.menu-dropdown::-webkit-scrollbar-thumb,
+.menu-sub-dropdown::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.menu-dropdown::-webkit-scrollbar-thumb:hover,
+.menu-sub-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .menu-submenu-item:hover > .menu-sub-dropdown {
